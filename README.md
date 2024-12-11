@@ -110,6 +110,21 @@ I found out that all the columns I am using are MAR. I created a loop that looke
   frameborder="0"
 ></iframe>
 
+| Column Name       | P-Value |
+| ----------------- | ------- |
+| YEAR              | 0.0000  |
+| U.S.\_STATE       | 0.1588  |
+| POSTAL.CODE       | 0.1580  |
+| NERC.REGION       | 0.3030  |
+| CLIMATE.REGION    | 0.3240  |
+| ANOMALY.LEVEL     | 0.0000  |
+| CAUSE.CATEGORY    | 0.0000  |
+| TOTAL.CUSTOMERS   | 0.0012  |
+| PC.REALGSP.REL    | 0.0026  |
+| PC.REALGSP.CHANGE | 0.1876  |
+| PC.REALGSP.STATE  | 0.0032  |
+| TOTAL.REALGSP     | 0.0012  |
+
 ## Hypothesis testing
 
 Null hypothesis: The total customers per outage in California are the same as the total customers per outage in the other states customers per outage
@@ -126,10 +141,10 @@ These questions show me exactly what I need to know. It shows me the total amoun
 
 ## Framing a Prediction Problem
 
-I dedcided to create a regression predictor to predict the total sales of particular states. This can be important as states need to know how their total sales, and thus production, can be impacted by particular aspects. This can be total customers, but also how well the economy is even doing. If a state seems to be in an economic downturn, they can implement policies to boost the economy. I will predict TOTAL.SALES as this is mainly responsible for getting the total sales per state.
+I decided to create a regression predictor to predict the total sales of particular states. This can be important as states need to know how their total sales, and thus production, can be impacted by particular aspects. This can be total customers, but also how well the economy is even doing. If a state seems to be in an economic downturn, they can implement policies to boost the economy. I will predict TOTAL.SALES as this is mainly responsible for getting the total sales per state.
 
 <iframe
-  src="assets/sales_customer_state.html"
+  src="assets/sales_customers_state.html"
   width="800"
   height="600"
   frameborder="0"
@@ -148,7 +163,9 @@ For my baseline model, I will be using a simple Linear Regression model as it is
 
 ## Final Model
 
-For my final model, it was clear there was still work that had to be done. I used the columns: 'TOTAL.CUSTOMERS', 'PC.REALGSP.REL', 'U.S.\_STATE', 'PC.REALGSP.STATE', 'TOTAL.REALGSP', where they were all numerical. I added a standard scaler to all of them and one-hot encoded state. Here we also added hyper params and used-kfold of 5 to see which hyper parameter and model performed best. It was clear that the RandomForest was the winner with a RMSE of 2.99
+For my final model, it was clear there was still work that had to be done. I used the columns: 'TOTAL.CUSTOMERS', 'PC.REALGSP.REL', 'U.S.\_STATE', 'PC.REALGSP.STATE', 'TOTAL.REALGSP', where they were all numerical. I added a standard scaler to all of them and one-hot encoded state. Here we also added hyper params and used-kfold of 5 to see which hyper parameter and model performed best. I also chose to look at max_depth, and max_split. These are interesting hyperparameters as they look at over or underfitting models. With this particular problem, we are looking at what fits different states best, areas that have completely different cultural and economic characteristics.
+
+It was clear that the RandomForest was the winner with a RMSE of 2.99.
 
 <iframe
   src="assets/model_rf.html"
@@ -159,4 +176,11 @@ For my final model, it was clear there was still work that had to be done. I use
 
 ## Fairness Analysis
 
-My fairness anaysis showed it wasn't fair towards High GSP states,as it had a higher RMSE. This we need to take into consideration.
+I divided my population up in high GSP states and low GSP states, with a:
+
+null hypothesis: high gsp states have similar rmses as low gsp states
+alternative hypothesis: high gsp states have different rmses as low gsp states
+
+I used a test-statistic of difference in rmse
+
+We saw that with a p-value of 0.0 that we could reject the null. Here we saw that high GSP states have higher RMSE compared to low gsp states. This is less fair and something we need to take into consideration. We could also try to figure out, what causes this to even happen?
