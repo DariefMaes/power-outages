@@ -100,3 +100,63 @@ Focusing further on California, I was also curious if there is a trend over the 
 ></iframe>
 
 ## Assessment of Missingness
+
+I found out that all the columns I am using are MAR. I created a loop that looked over every column with missing values. Here I saw for example that outage.duration was MAR on multiple columns, including year. This means that YEAR played a big role in the reason why this value was missing at times. I saw this with multiple values. This explicitly tells me that the missingness of certain variables is due to explicit reasons and unavalability of certain data in outages. This also made me sure that I could use conditional imputation to fill the values, as I believed this wouldn't make the values bias.
+
+<iframe
+  src="assets/missing_year_outage_duration.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Hypothesis testing
+
+Null hypothesis: The total customers per outage in California are the same as the total customers per outage in the other states customers per outage
+Alternative Hypothesis: The total customers per outage in Californiais higher as the total customers per outage in the other states customers per outage
+
+These questions show me exactly what I need to know. It shows me the total amount of customers in a state linked to the outages. This is interesting as we can thereby see if certain high populated areas, like California, have more people affected by outages compared to other states.
+
+<iframe
+  src="assets/hyp_cali.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Framing a Prediction Problem
+
+I dedcided to create a regression predictor to predict the total sales of particular states. This can be important as states need to know how their total sales, and thus production, can be impacted by particular aspects. This can be total customers, but also how well the economy is even doing. If a state seems to be in an economic downturn, they can implement policies to boost the economy. I will predict TOTAL.SALES as this is mainly responsible for getting the total sales per state.
+
+<iframe
+  src="assets/sales_customer_state.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Baseline Model
+
+For my baseline model, I will be using a simple Linear Regression model as it is simple and it can help me see which way I should go. I used state, real GSP relative to the US' GDP and the total customers. I one-hot encoded all the states. This model should be able to predict the total sales in basic levels. With this, I got an RMSE of 4.315. The total customers and real GSP relatieve to the US' GDP were not changed. This I did to incorporate the significance of bigger states onto the total sales.
+
+<iframe
+  src="assets/model_lin.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Final Model
+
+For my final model, it was clear there was still work that had to be done. I used the columns: 'TOTAL.CUSTOMERS', 'PC.REALGSP.REL', 'U.S.\_STATE', 'PC.REALGSP.STATE', 'TOTAL.REALGSP', where they were all numerical. I added a standard scaler to all of them and one-hot encoded state. Here we also added hyper params and used-kfold of 5 to see which hyper parameter and model performed best. It was clear that the RandomForest was the winner with a RMSE of 2.99
+
+<iframe
+  src="assets/model_rf.html"
+  width="800"
+  height="600"
+  frameborder="0"
+></iframe>
+
+## Fairness Analysis
+
+My fairness anaysis showed it wasn't fair towards High GSP states,as it had a higher RMSE. This we need to take into consideration.
